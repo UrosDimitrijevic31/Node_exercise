@@ -1,0 +1,25 @@
+{
+  "name": "first-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UrosDimitrijevic31/Node.git"
+  },
+  "author": "Uros Dimitrijevic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UrosDimitrijevic31/Node/issues"
+  },
+  "homepage": "https://github.com/UrosDimitrijevic31/Node#readme",
+  "dependencies": {
+    "underscore": "^1.12.0"
+  },
+  "devDependencies": {
+    "jshint": "^2.12.0"
+  }
+}
