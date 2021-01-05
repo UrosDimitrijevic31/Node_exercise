@@ -8,26 +8,73 @@ mongoose.connect('mongodb://localhost:27017/playground', { useNewUrlParser: true
 //pravimo semu - SCHEMA - gde setujemo koji podaci ce se nalaziti u dokumentima, (slicno kao redovi u mysql)    
 
 const courseSchema = new mongoose.Schema({
-    name: String,
+    name: { 
+        type: String,
+        required: true, 
+        minlength: 5, 
+        maxlength: 255,
+        // match: /pattern/
+    },
     author: String,
-    tags: [ String ],
+    tags: {
+        type: Array,
+        validate: {
+            validator: async function (v) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        const result =  v && v.length > 0;
+                        resolve(result);
+                    }, 4000);
+                })
+            },
+            message: 'A course should have a least one tag'
+        }
+    },
     data: { type: Date, default: Date.now},
-    isPublished: Boolean
+    isPublished: Boolean,
+    price: {
+        type: Number,
+        min: 10,
+        max: 200,
+        required: function() { 
+            return this.isPublished
+        }
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: ['web', 'mobile', 'network'] //koristi se da definisemo koje reci su moguce (koji su moguci ishodi)
+    }
 })
 
 const Course = mongoose.model('Course', courseSchema);
 
 async function createCourse() {
     const course = new Course({
-        name: 'Java Course',
-        author: 'Uros',
-        tags: [ 'eract', 'frontend' ],
-        isPublished: false
+        name: 'Java Script',
+        category: '-',
+        author: 'Uros Dimitrijevic',
+        tags: [ ],
+        isPublished: false, 
+        price: 15
     })
 
-    const result = await course.save(); //vraca promis
-    console.log(result);     
+    try {
+        // const result = await course.validate( (err) => {
+        //     if(err) { }
+        // })
+        const result = await course.save(); //vraca promis
+        console.log(result);   
+    } catch (ex) {
+        //ex je OBUJEKAT
+         for (fields in ex.errors) {
+             console.log(ex.errors[fields].properties.message);
+         }
+    }
+    
 }
+
+createCourse();
 
 async function getCourses() {
     const courses = await Course
@@ -37,6 +84,8 @@ async function getCourses() {
         .select({ name: 1, tags: 1 })
     console.log(courses);
 }
+
+//getCourses();
 
 //treba razmisljati iz js perspektive 
 async function getCoursesTest() {
@@ -61,22 +110,25 @@ async function updateCourse(id) {
     console.log(result);
 } 
 
-updateCourse('5fea03824469d5554aa7b686');
+// updateCourse('5fea03824469d5554aa7b686');
 
 //query first approach - direktno u bazi, ne idemo prvo da nadjemo objekat iz baze pa onda da ga dobijemo, zatim promenimo pa vratimo
 async function updateCourse2(id) {
-    const course = await Course.updateOne({ _id: id },{
+    const result = await Course.findByIdAndUpdate({ _id: id },{
         $set: {
             isPublished: false,
-            author: 'uros Dimitrijevic' 
+            author: 'Uros Dimitrijevic' 
         }
-    });
+    }, {new: true});
     console.log(result);
 } 
 
-// updateCourse('5fea03824469d5554aa7b686');
-updateCourse2('5fea03824469d5554aa7b686')
+//updateCourse2('5fea03824469d5554aa7b686')
 
 
-// createCourse();
-//getCourses();
+async function removeCourse(id) {
+    const course = await Course.findByIdAndDelete({ _id: id });
+    console.log(course);
+}
+
+//removeCourse('5fea03824469d5554aa7b686')
