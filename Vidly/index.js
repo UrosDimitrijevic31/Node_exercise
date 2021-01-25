@@ -1,13 +1,19 @@
 const express = require('express');
 const app = express();
-const Joi = require('joi');
+const mongoose = require('mongoose');
 const genres = require('./routes/genres');
 const home = require('./routes/home');
 const auth = require('./middleware/auth');
+const customers = require('./routes/customers')
+
+mongoose.connect('mongodb://localhost:27017/vidly', { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+    .then( () => console.log('Connect to MongoDB...'))
+    .catch( err => console.error('Could not connect to MongoDB...'))
 
 app.use(express.json());
 app.use(auth);
-app.use('/genres/api', genres);
+app.use('/api/genres', genres);
+app.use('/api/customers', customers);
 app.use('/', home);
 
 

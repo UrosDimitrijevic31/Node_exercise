@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 //**ovde umesto mongodb://localhost treba da stavimo referencu na promenljivu koju citamo iz config fajla(zavisno da li production, development)
 mongoose.connect('mongodb://localhost:27017/playground', { useNewUrlParser: true, useUnifiedTopology: true }) //----!!!---connect vraca promis
     .then( () => console.log('Connected to MongoDB...')) //bolje debugging mode nego console log
-    .catch(err => console.error('Could not connect to mongo db...', err));
+    .catch(err => console.error('Could not connect to mongo db...', err));  
 
 //pravimo semu - SCHEMA - gde setujemo koji podaci ce se nalaziti u dokumentima, (slicno kao redovi u mysql)    
 
@@ -24,7 +24,7 @@ const courseSchema = new mongoose.Schema({
                     setTimeout(() => {
                         const result =  v && v.length > 0;
                         resolve(result);
-                    }, 4000);
+                    }, 2000);
                 })
             },
             message: 'A course should have a least one tag'
@@ -38,12 +38,17 @@ const courseSchema = new mongoose.Schema({
         max: 200,
         required: function() { 
             return this.isPublished
-        }
+        },  
+        get: v => Math.round(v), //desavas se kad upisujemo podatak u bazu, moze biti bilo kakva funkcija
+        set: v => Math.round(v) //desava se kada citamo / dobijamo podatak iz bae
     },
     category: {
         type: String,
         required: true,
-        enum: ['web', 'mobile', 'network'] //koristi se da definisemo koje reci su moguce (koji su moguci ishodi)
+        enum: ['web', 'mobile', 'network'], //koristi se da definisemo koje reci su moguce (koji su moguci ishodi),
+        lowercase: true,
+        uppercase: false,
+        trim: true //ako imamo razmak u stringu, w eb - uradice web
     }
 })
 
