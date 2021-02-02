@@ -1,29 +1,11 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
-
-const Customers = mongoose.model('Customers', new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 3,
-        maxlength: 50
-    },
-    isGold: {
-        type: Boolean,
-        required: true
-    },
-    phone: {
-        type: Number,
-        required: true,
-        minlength: 6
-    }
-}))
+const { Customer, validate } = require('../models/customer')
 
 //lista svih customera
 router.get('/', async (req, res) => {
-    const customers = await Customers.find();
+    const customers = await Customers.find().sort('name');
     res.send(customers);
 })
 
@@ -36,10 +18,10 @@ router.get('/:id', async (req, res) => {
 
 //kreiranje kursa
 router.post('/', async (req, res) => {
-    let {error} = validateCourse(req.body);
+    let {error} = validate(req.body);
     if(error) return res,status(404).send(error.details[0].message);
     
-    let customer = new Customers({
+    let customer = new Customer({
         name: req.body.name,
         isGold: req.body.isGold,
         phone: req.body.phone
@@ -51,10 +33,10 @@ router.post('/', async (req, res) => {
 
 //update korisnika
 router.put('/:id', async (req, res) => {
-    let {error} = validateCourse(req.body);
+    let {error} = validate(req.body);
     if(error) return res.status(404).send(error.details[0].message);
 
-    const customer = await Customers.findByIdAndUpdate({_id: req.params.id}, {
+    const customer = await Customer.findByIdAndUpdate({_id: req.params.id}, {
         $set: {
             name: req.body.name,
             isGold: req.body.isGold,
@@ -67,18 +49,12 @@ router.put('/:id', async (req, res) => {
 })
 
 //brisanje korisnika
+router.delete('/:id', async (req, res) => {
+    const customer = await Customers.findByIdAndDelete({ _id: req.params.id });
 
+    if(!customer) return res.status(404).send('Customer with given id not foubd');
 
-
-//pomocna funkcija, sluzi za validaciju koda - Joi npm paket
-function validateCourse(genre){
-    const schema = {
-        name: Joi.string().min(3).required(),
-        isGold: Joi.boolean().required(),
-        phone: Joi.number().min(6).required()
-    }
-    return Joi.validate(genre, schema);
-    
-}
+    res.send(customer);
+})
 
 module.exports = router;
