@@ -1,16 +1,14 @@
-const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
 const { Genre, validate } = require('../models/genre') //destruktuiranje objekta
 
-//liste svih kurseva
+//liste svih zanrova
 router.get('/', async (req, res ) => {
     const genres = await Genre.find().sort('name');
     res.send(genres);
 })
 
-//pojedinacni kurs
+//pojedinacni zanr
 router.get('/:id', async (req, res) => {
     let genre = await Genre.findById(req.params.id);
 
@@ -19,10 +17,11 @@ router.get('/:id', async (req, res) => {
     res.send(genre);
 })
 
-//dodati kurs
+//dodati zanr
 router.post('/', async (req, res) => {    
     let { error } = validate(req.body);
-    if(error) return res.status(400).send(error.details[0].message)
+    if(error) return res.status(400).send(error.details[0].message);
+    
     let genre = new Genre({
         name: req.body.name        
     })
@@ -31,7 +30,7 @@ router.post('/', async (req, res) => {
     res.send(genre);
 })
 
-//update kursa 
+//update zanra 
 router.put('/:id', async (req, res) => {
     const { error } = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message);

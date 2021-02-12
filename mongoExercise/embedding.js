@@ -4,30 +4,21 @@ mongoose.connect('mongodb://localhost/playground', { useNewUrlParser: true, useU
   .then(() => console.log('Connected to MongoDB...'))
   .catch(err => console.error('Could not connect to MongoDB...', err));
 
-const Author = mongoose.model('Author', new mongoose.Schema({
+const authorSchema = new mongoose.Schema({
   name: String,
   bio: String,
   website: String
-}));
+});
+
+const Author = mongoose.model('Author', authorSchema);
 
 const Course = mongoose.model('Course', new mongoose.Schema({
   name: String,
   author: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Author'
+    type: authorSchema, 
+    required: true
   }
 }));
-
-async function createAuthor(name, bio, website) { 
-  const author = new Author({
-    name, 
-    bio, 
-    website 
-  });
-
-  const result = await author.save();
-  console.log(result);
-}
 
 async function createCourse(name, author) {
   const course = new Course({
@@ -40,15 +31,22 @@ async function createCourse(name, author) {
 }
 
 async function listCourses() { 
-  const courses = await Course
-    .find()
-    .populate('author', 'name -_id') //mozemo koliko hocemo populate da stavimo
-    .select('name author');
+  const courses = await Course.find();
   console.log(courses);
 }
 
-//createAuthor('Mosh', 'My bio', 'My Website');
+async function updateAuthor(courseId) {
+  const course = await Course.findByIdAndUpdate({_id: courseId}, {
+    $set: {
+      'author.name': 'Milica Tosic'
+    }
+    //obrisemo ceo objekat, mogu da se brisu i posebno vrednosti: author.name : ''
+    // $unset: {
+    //   'author': ''
+    // }
+  });
+  console.log(course);
+}
 
- //createCourse('Node Course', '60227e46113bc04eeda543c5')
-
-listCourses();
+//createCourse('Node Course', new Author({ name: 'Mosh' }));
+updateAuthor('60253d446c577d43148a4ac1')
