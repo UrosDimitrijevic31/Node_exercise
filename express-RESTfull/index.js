@@ -17,7 +17,7 @@ const home = require('./routes/home')
 
 //built-in middleware
 app.use(express.json())  //zbog req.body.name , zbog middleware-a je .json()
-app.use(express.urlencoded({ extended: true })); //kadse salje par vrednost - kljuc
+app.use(express.urlencoded({ extended: true })); //kad se salje par: vrednost - kljuc
 app.use(express.static('public')); //da cita sadrzaj iz tog foldera, slike, text, idt ..
 
 //ove sam ja napravio - custom middleware function

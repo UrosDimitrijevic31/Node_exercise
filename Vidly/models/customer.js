@@ -21,13 +21,13 @@ const Customer = mongoose.model('Customers', new mongoose.Schema({
 }))
 
 //pomocna funkcija, sluzi za validaciju koda - Joi npm paket
-function validateCourse(genre){
+function validateCourse(customer){
     const schema = {
         name: Joi.string().min(5).max(50).required(),
         isGold: Joi.boolean(),
         phone: Joi.number().min(5).max(50).required()
     }
-    return Joi.validate(genre, schema);
+    return Joi.validate(customer, schema);
 }
 
 exports.Customer = Customer;
