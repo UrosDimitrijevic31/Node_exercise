@@ -1,3 +1,4 @@
+const auth = require('../middleware/auth')
 const express = require('express');
 const router = express.Router();
 const { Genre, validate } = require('../models/genre') //destruktuiranje objekta
@@ -17,8 +18,8 @@ router.get('/:id', async (req, res) => {
     res.send(genre);
 })
 
-//dodati zanr
-router.post('/', async (req, res) => {    
+//dodati zanr, treba omoguciti samo za ulogovane korisnike,  2. parametar je middleware, i njega ubacujemo opciono
+router.post('/', auth, async (req, res) => {    
     let { error } = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message);
     
@@ -31,7 +32,7 @@ router.post('/', async (req, res) => {
 })
 
 //update zanra 
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
     const { error } = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message);
 
@@ -46,7 +47,7 @@ router.put('/:id', async (req, res) => {
 })
 
 //brisanje kursa
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
    const genre = await Genre.findByIdAndDelete({ _id: req.params.id }); 
 
    if(!genre) return res.status(404).send('Genre with given id not foubd');

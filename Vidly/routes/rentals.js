@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
+const Fawn = require('fawn');
 const {Rental, validate } = require('../models/rental');
 const {Movie} = require('../models/movie');
 const {Customer} = require('../models/customer');
+const auth = require('../middleware/auth');
 
+Fawn.init(mongoose);
 
 //lista svih porudzbina
 router.get('/', async (req, res) => {
@@ -13,7 +16,7 @@ router.get('/', async (req, res) => {
 })
 
 //kreiranje porudzbine
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { error } = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message);
 
@@ -27,20 +30,30 @@ router.post('/', async (req, res) => {
 
     let rental = new Rental({
         customer: {
-            _id: customerId,
+            _id: customer._id,
             name: customer.name,
             phone: customer.phone
         },
         movie: {
-            _id: movieId,
+            _id: movie._id,
             title: movie.title,
             dailyRentalRate: movie.dailyRentalRate
         }
     });
-    rental = await rental.save();
-
-    movie.numberInStock--; //skinemo sa stanja jedan film
-    movie.save;
-
-    res.send(rental); //kad pozove 2x save() moze doci do pucanja konekcije, pa nam trebaju transakcije (nesto slicno)
+    
+    try{
+        new Fawn.Task()
+            .save('rentails', rental)
+            .update('movies', { _id: movie._id}, {
+                $inc: { numberInStock: -1 } //$inc - to je operator od ranije
+            })
+            .run();
+        
+        res.send(rental); //kad pozove 2x save() moze doci do pucanja konekcije, pa nam trebaju transakcije (nesto slicno)
+    }
+    catch(ex) {
+        res.status(500).send('Something failed.')
+    }    
 });
+
+module.exports = router;

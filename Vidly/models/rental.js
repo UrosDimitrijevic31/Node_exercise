@@ -59,8 +59,8 @@ const Rental = mongoose.model('Rentals', new mongoose.Schema({
 //pomocna funkcija, sluzi za validaciju koda - Joi npm paket
 function validateRental(rental){
     const schema = {
-        customerId: Joi.string().required(),
-        movieId: Joi.string().required()
+        customerId: Joi.objectId().required(),// objectId nam treba da proveri da li je dobar id, da lije string i sadrzi 24 karaktera
+        movieId: Joi.objectId().required()
     }
     return Joi.validate(rental, schema);
 }
