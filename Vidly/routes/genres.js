@@ -1,13 +1,15 @@
-const auth = require('../middleware/auth')
+// const asyncMiddleware = require('../middleware/async'); 
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 const express = require('express');
 const router = express.Router();
 const { Genre, validate } = require('../models/genre') //destruktuiranje objekta
 
 //liste svih zanrova
-router.get('/', async (req, res ) => {
+router.get('/', async (req, res) => {
     const genres = await Genre.find().sort('name');
     res.send(genres);
-})
+});
 
 //pojedinacni zanr
 router.get('/:id', async (req, res) => {
@@ -47,7 +49,7 @@ router.put('/:id', auth, async (req, res) => {
 })
 
 //brisanje kursa
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', [auth, admin], async (req, res) => {
    const genre = await Genre.findByIdAndDelete({ _id: req.params.id }); 
 
    if(!genre) return res.status(404).send('Genre with given id not foubd');

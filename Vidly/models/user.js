@@ -24,11 +24,14 @@ const userSchema = new mongoose.Schema({
         maxlength: 1024
     },
     isAdmin: Boolean
+    //kad nam treba vise ro;a, i vise nekih operacija - sira slika ista kao sa isAdmin, proverimo ap u skladu sa tim delujemo
+    // roles: [],
+    // operations: []
 });
 
 // .methods.ime metode = dodajemo metode u objekat :)
 userSchema.methods.generateAuthToken  = function () {
-    const token = jwt.sign({ _id: this._id }, config.get('jwtPrivateKey')); //na osnovu ova dva parametra se formira digitalni potpis, nikad se ne pise ovako kljuc (2. argument)
+    const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, config.get('jwtPrivateKey')); //na osnovu ova dva parametra se formira digitalni potpis, nikad se ne pise ovako kljuc (2. argument)
     return token;
 }
 
