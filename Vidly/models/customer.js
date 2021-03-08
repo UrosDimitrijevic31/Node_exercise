@@ -20,7 +20,7 @@ const Customer = mongoose.model('Customers', new mongoose.Schema({
     }
 }))
 
-//pomocna funkcija, sluzi za validaciju koda - Joi npm paket
+// *pomocna funkcija, sluzi za validaciju koda - Joi npm paket
 function validateCourse(customer){
     const schema = {
         name: Joi.string().min(5).max(50).required(),

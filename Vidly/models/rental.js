@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Joi = require('joi');
 
 const Rental = mongoose.model('Rentals', new mongoose.Schema({
-    //koji flm je ko iznajmio
+    // *koji flm je ko iznajmio
     customer: {
         type: new mongoose.Schema({
             name: {
@@ -56,10 +56,10 @@ const Rental = mongoose.model('Rentals', new mongoose.Schema({
     } 
 }))
 
-//pomocna funkcija, sluzi za validaciju koda - Joi npm paket
+// pomocna funkcija, sluzi za validaciju koda - Joi npm paket
 function validateRental(rental){
     const schema = {
-        customerId: Joi.objectId().required(),// objectId nam treba da proveri da li je dobar id, da lije string i sadrzi 24 karaktera
+        customerId: Joi.objectId().required(),// *objectId nam treba da proveri da li je dobar id, da lije string i sadrzi 24 karaktera
         movieId: Joi.objectId().required()
     }
     return Joi.validate(rental, schema);

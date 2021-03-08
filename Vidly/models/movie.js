@@ -28,11 +28,11 @@ const Movie = mongoose.model('Movie', new mongoose.Schema({
     }
 }))
 
-//pomocna funkcija, sluzi za validaciju koda - Joi npm paket
+// *pomocna funkcija, sluzi za validaciju koda - Joi npm paket
 function validateMovie(genre){
     const schema = {
         title: Joi.string().min(3).max(50).required(),
-        genreId: Joi.objectId().required(), //korisnik treba da izabere zanr
+        genreId: Joi.objectId().required(), // *korisnik treba da izabere zanr
         numberInStock: Joi.number().required(),
         dailyRentalRate: Joi.number().required()
     }

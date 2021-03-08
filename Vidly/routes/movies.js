@@ -5,13 +5,13 @@ const { Movie, validate } = require('../models/movie');
 const {Genre} = require('../models/genre');
 const auth = require('../middleware/auth');
 
-//Lista svih filmova
+// *Lista svih filmova
 router.get('/', async (req, res) => {
     const movies = await Movie.find().sort("name");
     res.send(movies);
 })
 
-//pojedinacni filmovi
+// *pojedinacni filmovi
 router.get('/:id', async (req, res) => {
     let movie = await Movie.findById(req.params.id);
 
@@ -20,7 +20,7 @@ router.get('/:id', async (req, res) => {
     res.send();
 })
 
-//dodati film
+// *dodati film
 router.post('/', auth, async (req, res) => {
     let { error } = validate(req.body);
     if(error) return res.status(400).send(error.details[0].message);
@@ -42,7 +42,7 @@ router.post('/', auth, async (req, res) => {
     res.send(movie);
 })
 
-//update film
+// *update film
 router.put('/:id', auth,  async (req, res) => {
     const {error} = validate(req.body);
     if(error) return res.status(404).send(error.details[0].message);

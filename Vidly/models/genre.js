@@ -12,10 +12,10 @@ const genreSchema =new mongoose.Schema({
 
 const Genre = mongoose.model('Genre', genreSchema);
 
-//pomocna funkcija, sluzi za validaciju koda - Joi npm paket
+// *pomocna funkcija, sluzi za validaciju koda - Joi npm paket
 function validateGenre(genre){
     const schema = {
-        name: Joi.string().min(3).max(50).required()
+        name: Joi.string().min(5).max(50).required()
     }
     return Joi.validate(genre, schema);
     
