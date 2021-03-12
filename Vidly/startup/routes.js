@@ -7,6 +7,7 @@ const rentals = require('../routes/rentals');
 const users = require('../routes/users');
 const auth = require('../routes/auth');
 const error = require('../middleware/error');
+const returns = require('../routes/returns'); //!zbog testa DDT
 
 const url = 'http://vidly.com/api/';
 
@@ -19,5 +20,6 @@ module.exports = function (app) {
     app.use('/api/rentals', rentals);
     app.use('/api/users', users);
     app.use('/api/auth', auth);
+    app.use('/api/returns', returns); //!zbog testa DDT
     app.use(error);  //bitno je da bude nakon svih middleware funkcija
 }
